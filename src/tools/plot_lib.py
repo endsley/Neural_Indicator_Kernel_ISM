@@ -61,7 +61,7 @@ def plot_heatMap(db, K, layer_id):
 
 
 
-def plot_目(db, score_目, Ł_目, Łabel_目, title, xlabel, n, ylabel=''):
+def plot_目(db, score_目, Ł_目, title, xlabel, n, ylabel=''):
 	plt.clf()
 	目 = zip(score_目, Ł_目)
 
@@ -83,36 +83,21 @@ def plot_目(db, score_目, Ł_目, Łabel_目, title, xlabel, n, ylabel=''):
 #	import pdb; pdb.set_trace()	
 
 	idx = 0
-	目 = zip(score_目, Ł_目, Łabel_目)
-	for score, Ł, label in 目:
-		plt.plot(score, label=label)
+	目 = zip(score_目, Ł_目)
+	for score, Ł in 目:
+		plt.plot(score)
 		#plt.arrow(n+1.8, hpos[idx], -1.8, Δ[idx], head_width=0.05, head_length=0.080, linestyle='dotted', fc='k', ec='k')
 		#plt.arrow(0, score[0], 2.0, -Δ[idx], head_width=0.03, head_length=0.080, linestyle=':', fc='k', ec='k')
 		#cir = plt.Circle((0, score[0]), 0.01)
 		#plt.gcf().gca().add_artist(cir)
-		#plt.text(-0.1,score[0], Ł, ha='right', va='center', fontsize=20, fontweight='bold' )
-		plt.text(-0.1,score[0], Ł, ha='right', va='center', fontsize=17)
-		plt.axis([-0.9, len(score)-1, -0.1, 1.05])
+		plt.text(-0.1,score[0], Ł, ha='right', va='center', fontsize=10, fontweight='bold' )
+		plt.axis([-0.6, len(score)-1, -0.1, 1.05])
 		idx += 1
 
-	#legend_properties = {'weight':'bold', 'size':'xx-large'}
-	#legend_properties = {'size':'large'}
-	#plt.legend(fontsize=17, prop=legend_properties, framealpha=0.9)
-	plt.legend(fontsize=13, framealpha=0.7)
-
 	#import pdb; pdb.set_trace()
-	plt.xlabel(xlabel, fontsize=17 )
-	plt.ylabel(ylabel, fontsize=17 )
-
-	#plt.xlabel(xlabel, fontsize=15, fontweight='bold' )
-	#plt.ylabel(ylabel, fontsize=15, fontweight='bold' )
-	#plt.gca().spines["bottom"].set_linewidth(2)
-	#plt.gca().spines["top"].set_linewidth(2)
-	#plt.gca().spines["left"].set_linewidth(2)
-	#plt.gca().spines["right"].set_linewidth(2)
-	#plt.title(title, fontsize=18, fontweight='bold' )
-	plt.title(title, fontsize=18)
-
+	plt.xlabel(xlabel, fontsize=15, fontweight='bold' )
+	plt.ylabel(ylabel, fontsize=15, fontweight='bold' )
+	plt.title(title, fontsize=18, fontweight='bold' )
 	plt.xticks(np.arange(len(score_目[0])), np.arange(1, len(score_目[0])+1))
 	#plt.show()
 

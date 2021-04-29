@@ -22,7 +22,7 @@ def combine_kernel_img(data_list):
 				if os.path.exists(item_path): 
 					Ꮭ_of_kernels.append(item_path)
 
-
+			import pdb; pdb.set_trace()
 			imSize = Image.open(Ꮭ_of_kernels[0]).size
 			crop_window = (80, 20,imSize[0] - 110, imSize[1] - 5)
 	

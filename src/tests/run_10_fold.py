@@ -40,7 +40,7 @@ def aggregate_all_ism_results(data_name):
 
 
 	for ᘔ, Ⴥ in Ð.items():
-		Ð2[ᘔ] = '%.2f ± %.2f'%(np.mean(np.array(Ⴥ)),np.std(np.array(Ⴥ)))
+		Ð2[ᘔ] = '%.3f ± %.3f'%(np.mean(np.array(Ⴥ)),np.std(np.array(Ⴥ)))
 		
 	pth_name = './results/' + data_name + '/ism_10_fold.txt'
 	fout = open(pth_name, 'w')
@@ -82,7 +82,7 @@ def run_10_fold(data_name, KN):
 		test_acc = accuracy_score(Ł_test, Y_test)
 	
 		record_results_to_txt(train_acc, test_acc, knet)
-		combine_kernel_img(file_name)
+		#combine_kernel_img(file_name)
 		#record_label_stats(data_name, Y, Łabel, Ł_test)
 
 	aggregate_all_ism_results(data_name)

@@ -20,6 +20,19 @@ class list_of_network_layers():
 		#σ = 0.3
 		return σ
 
+
+	def set_input_data(self, db, X, Y):
+		if Y is None:	# This implies that we are running the batch version
+			self.db['batch_data'] = X
+			data_id = next(self.db['batch_data']['training_data_cyclic_list_itr'])
+			self.db['X'] = self.db['batch_data'][data_id]['X']
+			self.db['Y'] = self.db['batch_data'][data_id]['Y']
+		else:
+			self.db['X'] = X
+			self.db['Y'] = Y				
+
+		return [self.db['X'], self.db['Y']]
+
 		
 	def get_most_recent_training_output(self):
 		if len(self.ℓ_目) == 0:
@@ -30,7 +43,6 @@ class list_of_network_layers():
 	def add_layer_to_network(self, new_layer):
 		self.ℓ_目.append(new_layer)
 
-		
 
 	def save_network(self, out_path):
 		tmp_db = self.db

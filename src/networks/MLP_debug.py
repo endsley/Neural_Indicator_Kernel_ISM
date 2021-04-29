@@ -9,7 +9,6 @@ from ..tools.file_write import *
 def record_results_to_txt(db):
 	if not db['network_info']['knet'].db['record_internal']: return
 	netInfo = db['network_info']
-	net_depth = len(netInfo['network_structure'])
 
 	X = db['train_data'].X_Var
 	Y = db['network_info']['knet'].db['Y']
@@ -48,21 +47,17 @@ def record_results_to_txt(db):
 	if db['loss_function'] == 'MSE_loss': hsic = ℍ(Ȳ,Yₒ, Kᵪ_type='Gaussian')
 	else: hsic = ℍ(Ȳ,Yₒ)
 
-	#ȿ = sklearn.metrics.silhouette_score(Ȳ, Y)	
-	sR = scatter_ratio(Ȳ,Yₒ)
+	ȿ = sklearn.metrics.silhouette_score(Ȳ, Y)	
 
 	[mean_intra_cos_sim, σ_intra_cos_sim] = mean_intra_cluster_cosine_similarity(Ȳ,Y)
 	[mean_inter_cos_sim, σ_inter_cos_sim] = mean_inter_cluster_cosine_similarity(Ȳ,Y)
 	Ճ = mean_inter_cos_sim/mean_intra_cos_sim
 
-	#Ł = ('Train_Acc','Test_Acc','Time(s)', 'HSIC', 'Silhouette', 'MSE', 'CE', 'CSR')
-	#ᘐ = (db['train_acc'], db['test_acc'], db['ΔTime'], hsic, ȿ, db['train_MSE'], db['train_CE'], Ճ)
-	Ł = ('Depth','Train_Acc','Test_Acc','Time(s)', 'HSIC', 'MSE', 'CE', 'CSR', 'Scatter_ratio')
-	ᘐ = (net_depth, db['train_acc'], db['test_acc'], db['ΔTime'], hsic, db['train_MSE'], db['train_CE'], Ճ, sR)
+	Ł = ('Train_Acc','Test_Acc','Time(s)', 'HSIC', 'Silhouette', 'MSE', 'CE', 'CSR')
+	ᘐ = (db['train_acc'], db['test_acc'], db['ΔTime'], hsic, ȿ, db['train_MSE'], db['train_CE'], Ճ)
 
-
-	Ł_ʆ = ("%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s"%Ł)
-	Ꮙ_ʆ = ("%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f"%ᘐ)
+	Ł_ʆ = ("%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s"%Ł)
+	Ꮙ_ʆ = ("%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f"%ᘐ)
 	ʆ = Ł_ʆ + '\n' + Ꮙ_ʆ + '\n\n'
 
 	ʆ += '%-30s%d\n'%('Data Dimension :', netInfo['d'])

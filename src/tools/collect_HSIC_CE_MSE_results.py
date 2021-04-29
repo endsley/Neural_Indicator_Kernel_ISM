@@ -9,7 +9,7 @@ def extract_title(data_name, path):
 	fin.close()
 
 	title_line = '%-20s'%''
-	for i in range(9):
+	for i in range(8):
 		title_line += '%-20s'%(info[i][0:15].strip())
 
 	return title_line + '\n'
@@ -20,9 +20,9 @@ def extract_info(data_name, path):
 	fin.close()
 
 	line_info = '%-20s'%data_name
-	for i in range(9):
+	for i in range(8):
 		line_info += '%-20s'%(info[i][15:].strip())
-		
+
 	return line_info + '\n'
 
 

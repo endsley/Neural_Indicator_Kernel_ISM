@@ -19,8 +19,6 @@ def record_each_ℓ(Ꮬ, new_ℓ):
 
 	[mean_intra_cos_sim, σ_intra_cos_sim] = mean_intra_cluster_cosine_similarity(ℓᴼᵁᵀ,db['Y'])
 	[mean_inter_cos_sim, σ_inter_cos_sim] = mean_inter_cluster_cosine_similarity(ℓᴼᵁᵀ,db['Y'])
-	sR = scatter_ratio(zℓᴼᵁᵀ,db['Yₒ'])
-
 	mse = MSE(XWₐ,db['Y'])
 	CE = Get_Cross_Entropy(ℓᴼᵁᵀ,db['Y'])
 
@@ -32,20 +30,14 @@ def record_each_ℓ(Ꮬ, new_ℓ):
 	Ꮬ.Ɗ[layer_id] = {}
 	Ꮬ.Ɗ[layer_id]['Wₐ_shape'] = new_ℓ.Wₐ.shape
 	Ꮬ.Ɗ[layer_id]['ℓ_width'] = new_ℓ.Wₐ.shape[1]
-	#Ꮬ.Ɗ[layer_id]['HSIC'] = np.round(ℍ(ℓᴼᵁᵀ, db['Yₒ']),2)
-	Ꮬ.Ɗ[layer_id]['HSIC'] = np.round(db['hsic'],2)
-	Ꮬ.Ɗ[layer_id]['silhouette_score'] = np.round(db['ȿ'],2)
+	Ꮬ.Ɗ[layer_id]['HSIC'] = ℍ(ℓᴼᵁᵀ, db['Yₒ'])		
+	Ꮬ.Ɗ[layer_id]['silhouette_score'] = db['ȿ']		
 	Ꮬ.Ɗ[layer_id]['max〡xᴵ-xᴶ〡_đ'] = np.max(sklearn.metrics.pairwise.pairwise_distances(ℓᴼᵁᵀ))
 	Ꮬ.Ɗ[layer_id]['mean_intra_cos_sim'] = mean_intra_cos_sim
 	Ꮬ.Ɗ[layer_id]['mean_inter_cos_sim'] = mean_inter_cos_sim
-	Ꮬ.Ɗ[layer_id]['mse'] = np.round(mse,2)
-	Ꮬ.Ɗ[layer_id]['CE'] = np.round(CE,2)
+	Ꮬ.Ɗ[layer_id]['mse'] = mse
+	Ꮬ.Ɗ[layer_id]['CE'] = CE
 	Ꮬ.Ɗ[layer_id]['zℓᴼᵁᵀ'] = zℓᴼᵁᵀ
-	Ꮬ.Ɗ[layer_id]['scatter_ratio'] = np.round(sR,2)
-	Ꮬ.Ɗ[layer_id]['σ'] = new_ℓ.σ
-
-
-
 
 	plot_heatMap(db, K, layer_id)
 
@@ -53,7 +45,7 @@ def print_each_ℓ_ℹ(Ꮬ, new_ℓ):
 	db = Ꮬ.db 
 	if not db['print_internal_at_each_stage']: return
 
-	zℓᴼᵁᵀ = XWₐ = new_ℓ.XWₐ
+	XWₐ = new_ℓ.XWₐ
 	Wₐ = new_ℓ.Wₐ
 	Wᵦ = new_ℓ.Wᵦ
 	K = new_ℓ.Φᵪ.dot(new_ℓ.Φᵪ.T)
@@ -74,7 +66,6 @@ def print_each_ℓ_ℹ(Ꮬ, new_ℓ):
 	Yₒ = db['Yₒ']
 	ɦ = ℍ(ℓᴼᵁᵀ, Yₒ)		
 
-	sR = scatter_ratio(zℓᴼᵁᵀ,db['Yₒ'])
 	max_ij_đ = np.max(sklearn.metrics.pairwise.pairwise_distances(ℓᴼᵁᵀ))
 	mean_intra_đ = mean_intra_cluster_pairwise_distances(ℓᴼᵁᵀ,db['Y'])
 	[mean_intra_cos_sim, σ_intra_cos_sim] = mean_intra_cluster_cosine_similarity(ℓᴼᵁᵀ,db['Y'])
@@ -95,7 +86,6 @@ def print_each_ℓ_ℹ(Ꮬ, new_ℓ):
 	print('\tWᵦ	: ',str(Wᵦ.shape))
 	print('\tRFF # of samples : %d'%db['RFF_#_samples'])
 	print('\tSilhouette score	: %.3f'%db['ȿ'])
-	print('\tScatter Ratio	: %.3f'%sR)
 	print('\tLayer type : %s'%db['layer'].__name__)
 	print('\tKernel of Sampe Class	: \n\t',str(K_same).replace('\n','\n\t'))
 	print('\tKernel of Different Classes	: \n\t',str(K_diff).replace('\n','\n\t'))
@@ -114,24 +104,18 @@ def record_results_to_txt(train_acc, test_acc, knet):
 	run_time = np.sum(np.array(knet.db['time_目']))
 
 
-	#Ł = ('Train_Acc','Test_Acc','Time(s)', 'HSIC', 'MSE', 'CE', 'CSR', 'Silhouette')
-	#ᘐ = (train_acc, test_acc, run_time, Ꮬ['HSIC'], Ꮬ['mse'], Ꮬ['CE'], CSR, Ꮬ['silhouette_score'])
-	Ł = ('L', 'Train_Acc','Test_Acc','Time(s)', 'HSIC', 'MSE', 'CE', 'CSR', 'sR')
-	ᘐ = (Ɗ['#_of_layers'], train_acc, test_acc, run_time, Ꮬ['HSIC'], Ꮬ['mse'], Ꮬ['CE'], CSR, Ꮬ['scatter_ratio'])
+	Ł = ('Train_Acc','Test_Acc','Time(s)', 'HSIC', 'MSE', 'CE', 'CSR', 'Silhouette')
+	ᘐ = (train_acc, test_acc, run_time, Ꮬ['HSIC'], Ꮬ['mse'], Ꮬ['CE'], CSR, Ꮬ['silhouette_score'])
 
-
-	Ł_ʆ = ("%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s"%Ł)
-	#Ꮙ_ʆ = ("%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f"%ᘐ)
-	Ꮙ_ʆ = ("%-10.0f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f\t%-10.2f"%ᘐ)
+	Ł_ʆ = ("%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t%-10s"%Ł)
+	Ꮙ_ʆ = ("%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f\t%-10.3f"%ᘐ)
 
 
 
 	ʆ = Ł_ʆ + '\n' + Ꮙ_ʆ + '\n\nLayer Weight Dimension : \n'
 	
 	for i, ℓ in enumerate(mlp.ℓ_目):
-		ʆ = ʆ + ("\tσ : %.3f , %d :  %s\n"%(Ɗ[i+1]['σ'], i, str(ℓ.Wₐ.shape) ))
-
-
+		ʆ = ʆ + ("\t%d : %s\n"%(i, str(ℓ.Wₐ.shape) ))
 
 	write_train_results(knet.db['network'].db, ʆ)
 	print(ʆ) 
@@ -171,11 +155,9 @@ def record_final_ℓ(Ꮬ, xᴵᴺ):
 	ce_目 = []
 	cos_目 = []
 	Λ_目 = []
-	sR_目 = []
 
 	for i in np.arange(1,num_layer+1):
 		ȿ_目.append( Ꮬ.Ɗ[i]['silhouette_score'] )
-		sR_目.append(Ꮬ.Ɗ[i]['scatter_ratio'])
 		HSIC_目.append(Ꮬ.Ɗ[i]['HSIC'])
 		cos_目.append( Ꮬ.Ɗ[i]['mean_inter_cos_sim']/Ꮬ.Ɗ[i]['mean_intra_cos_sim'] )
 		mse_目.append( Ꮬ.Ɗ[i]['mse'] )
@@ -188,18 +170,14 @@ def record_final_ℓ(Ꮬ, xᴵᴺ):
 	#ce_目 = ce_目/np.max(ce_目)
 	#score_目 = [cos_目, ȿ_目, HSIC_目, mse_目, ce_目, Λ_目]
 	#Ł_目 = ['CS','Ŝ','HSIC','MSE', 'CE', 'Λ']
-
-	#score_目 = [cos_目, ȿ_目, HSIC_目, mse_目, ce_目]			# deprecated from using Silhuette Score
-	#Ł_目 = ['CS','$\mathcal{S}$','HSIC','MSE', 'CE']
-	score_目 = [cos_目, sR_目, HSIC_目, mse_目, ce_目]
-	Ł_目 = ['$C$','$\mathcal{T}$','$\mathcal{H}$','MSE', 'CE']
-	Łabel_目 = ['C: Cosine Similarity Ratio','$\mathcal{T}$: Scatter Trace Ratio','$\mathcal{H}:$ HSIC','MSE: Mean Square Error', 'CE: Cross Entropy']
+	score_目 = [cos_目, ȿ_目, HSIC_目, mse_目, ce_目]
+	Ł_目 = ['CS','$\mathscr{S}$','HSIC','MSE', 'CE']
 
 	title = 'Key Metrics : %s'%db['data_name'].split('/')[0]
 	xlabel = 'Network Layers'
 	ylabel = 'Score'
 	
-	plot_目(db, score_目, Ł_目, Łabel_目, title, xlabel, 0, ylabel)
+	plot_目(db, score_目, Ł_目, title, xlabel, 0, ylabel)
 
 	out_path = './results/' + db['data_name'] + '/mlp.pk'
 	Ꮬ.save_network(out_path)

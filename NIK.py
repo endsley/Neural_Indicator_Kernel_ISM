@@ -29,6 +29,7 @@ if __name__ == "__main__":
 	from src.tests.run_single_mlp_via_sgd import run_single_mlp_via_sgd
 	from src.tests.run_single_svm import run_single_svm
 	from src.tests.run_10_fold import *
+	from src.tests.run_large_sample_batch import *
 	from src.tests.run_10_fold_via_sgd import *
 	from src.tests.combine_kernel_img import combine_kernel_img
 	from src.tasks.gather_data_stats import *
@@ -50,6 +51,7 @@ else:
 	from .src.tests.run_single_mlp_via_sgd import run_single_mlp_via_sgd
 	from .src.tests.run_single_svm import run_single_svm
 	from .src.tests.run_10_fold import *
+	from .src.tests.run_large_sample_batch import *
 	from .src.tests.run_10_fold_via_sgd import *
 	from .src.tests.combine_kernel_img import combine_kernel_img
 	from .src.tasks.gather_data_stats import *
@@ -67,9 +69,10 @@ class kernelNet():
 		#	automated variables
 		self.db = {}
 		self.db['data_name'] = data_name
-		self.db['X'] = X
-		self.db['Y'] = Y				
-		self.db['Yₒ'] = Allocation_2_Y(Y)		# one hot encoding version
+		self.db['network'] = ISMLP(self.db)
+		[X,Y] = self.db['network'].set_input_data(self.db, X, Y)
+
+		self.db['Yₒ'] = Allocation_2_Y(Y)		# one hot encoding version	
 		self.db['ɕ'] = self.db['Yₒ'].shape[1]	# number of classes
 		self.db['N'] = N = X.shape[0]
 		self.db['d'] = d = X.shape[1]
@@ -77,28 +80,32 @@ class kernelNet():
 		#	turn on debug with True
 		self.db['record_internal'] = True					# run only for debug reasons
 		self.db['print_internal_at_each_stage'] = False		# run only for debug reasons
-
+		self.db['clear_previous_10_fold_results'] = False	# run only for debug reasons
 
 		#	adjustable variables
-		self.db['start_from_RKHS'] = False					# Project to RKHS prior to the network, will add 1st layer if True
-		self.db['PCA_σᒾ_kept'] = 0.90						# 0 to 1, percentage of variance kept by ISM
-		self.db['network'] = ISMLP(self.db)
-		self.db['layer'] = gaussian_layer 					# gaussian_layer, gauss_kpca_layer
+		self.db['start_from_RKHS'] = False						# Project to RKHS prior to the network, will add 1st layer if True
+		self.db['PCA_σᒾ_kept'] = 0.50							# 0 to 1, percentage of variance kept by ISM
+		self.db['layer'] = gaussian_layer 						# gaussian_layer, gauss_kpca_layer
+		#self.db['layer_feature_map_approximator'] = orf_layer 	# rff_layer, orf_layer
+		self.db['layer_feature_map_approximator'] = rff_layer 	# rff_layer, orf_layer
 		self.db['optimizer'] = sdr
 		self.db['final_layer'] = skpca_layer
-		self.db['RFF_#_samples'] = 300			
-		self.db['exit_criteria'] = 'silhouette'					# options : 'HSIC', 'silhouette'
-		#self.db['RFF_#_samples'] = 2100						# debug : make sure to comment out
-		#self.db['exit_score'] = 0.9999
+		self.db['RFF_#_samples'] = 400							# 1024	7000, 500
 		self.db['exit_score'] = 0.95
 		self.db['max_ℓ#'] = 30
+		#self.print_initial_state()
 
 		#	initialize folders
 		path_split = data_name.split('/')
 		ensure_path_exists('./results')
 		if len(path_split) > 1: ensure_path_exists('./results/' + path_split[0])
 		ensure_path_exists('./results/' + self.db['data_name'])
+		print('Initializing Kernel Net')
 
+	def print_initial_state(self):
+		if self.db['print_internal_at_each_stage']:
+			print('\tRFF_#_samples : %d'%self.db['RFF_#_samples'])
+			
 
 	def __del__(self):
 		del self.db['network']
@@ -122,54 +129,34 @@ class kernelNet():
 
 
 if __name__ == "__main__":
-#	for run_10_fold 
-	data_name = 'wine'
-	#data_name = 'cancer'
+	#	pick only 1 data set	 	-------------------------
+	data_name = 'random'
+	#data_name = 'adversarial'
 	#data_name = 'car'
+	#data_name = 'wine'
+	#data_name = 'cancer'
 	#data_name = 'face'
+	#data_name = 'cifar10'
 	#data_name = 'divorce'
 	#data_name = 'spiral'
-	#data_name = 'random'
-	#data_name = 'adversarial'
 
-	#gather_total_data_stats(data_name, kernelNet)
-	#collect_HSIC_CE_MSE_results(data_name)
-	#gen_10_fold_data(data_name, data_path='./data/')	
+
+	gen_10_fold_data(data_name, data_path='./data/')	
+
+
+	#	pick one to run		-------------------------
+	run_10_fold(data_name, kernelNet)
+	#run_10_fold_via_sgd(data_name, kernelNet, 'ikpca')
+	#run_10_fold_via_sgd(data_name, kernelNet, 'arcos')	
+	#run_10_fold_via_sgd(data_name, kernelNet, 'NTK')	
+	#run_10_fold_via_sgd(data_name, kernelNet, 'DeepGP')	
+	#run_10_fold_via_sgd(data_name, kernelNet, 'CE_loss')
+	#run_10_fold_via_sgd(data_name, kernelNet, 'MSE_loss')
+
+
+	#	This will save the aggregated result to txt
 	#aggregate_all_ism_results(data_name)
 	#aggregate_all_sgd_results(data_name, 'CE_loss')
 	#aggregate_all_sgd_results(data_name, 'MSE_loss')
 
-	run_10_fold(data_name, kernelNet)								#	< --  This is HSIC
-	#run_10_fold_via_sgd(data_name, kernelNet, 'CE_loss')			#	< --  This is CE
-	#run_10_fold_via_sgd(data_name, kernelNet, 'MSE_loss')			#	< --  This is MSE
 
-
-#	for run_single particular dataset within 10 fold
-	#data_name = 'random/random_1'
-	#data_name = 'adversarial/adversarial_1'
-	#data_name = 'car/car_1'
-	#data_name = 'face/face_1'
-	#data_name = 'cancer/cancer_3'
-	#data_name = 'wine/wine_1'
-	#data_name = 'divorce/divorce_2'
-
-	#run_single_mlp_via_sgd(data_name, kernelNet, 'CE_loss')		# options : CE_loss, MSE_loss
-	#run_single_mlp_via_sgd(data_name, kernelNet, 'MSE_loss')		# options : CE_loss, MSE_loss
-	#run_single_svm(data_name, kernelNet)
-	#run_single(data_name, kernelNet)
-
-
-##	run 10 fold on all datasets (Avoid running this one unless you know what you are doing)
-#	data_list = ['wine', 'cancer', 'car', 'face','divorce', 'random', 'adversarial', 'spiral']
-#	#data_list = ['wine', 'car', 'face','divorce']
-#	#data_list = ['scale']
-#
-#	for data_name in data_list:
-#		collect_HSIC_CE_MSE_results(data_name)
-#
-#	for data_name in data_list:
-#		run_10_fold(data_name, kernelNet)
-#		run_10_fold_via_sgd(data_name, kernelNet, 'CE_loss')
-#		run_10_fold_via_sgd(data_name, kernelNet, 'MSE_loss')
-#
-#	combine_kernel_img(data_list)

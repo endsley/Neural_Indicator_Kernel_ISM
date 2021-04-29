@@ -72,7 +72,6 @@ def basic_optimizer(model, db, data_loader_name, loss_callback='compute_loss', e
 		if len(avgLoss_cue) > 300 and progression_slope >= 0: break;
 		if zero_is_min: 
 			if maxLoss < 0.00001: break;
-			#if maxLoss < 0.001: break;
 
 	clear_current_line()
 	return [maxLoss, avgGrad, progression_slope]

@@ -2,6 +2,11 @@
 
 from src.tools.split_10_fold import *
 from src.tests.run_single_mlp_via_sgd import *
+from src.tests.run_single_DeepGP import *
+from src.tests.run_single_NTK import *
+from src.tests.run_single_arcos import *
+from src.tests.run_single_ikpca import *
+
 from src.tools.collect_HSIC_CE_MSE_results import collect_HSIC_CE_MSE_results
 
 
@@ -36,7 +41,7 @@ def aggregate_all_sgd_results(data_name, loss_function):
 
 
 	for ᘔ, Ⴥ in Ð.items():
-		Ð2[ᘔ] = '%.2f ± %.2f'%(np.mean(np.array(Ⴥ)),np.std(np.array(Ⴥ)))
+		Ð2[ᘔ] = '%.3f ± %.3f'%(np.mean(np.array(Ⴥ)),np.std(np.array(Ⴥ)))
 		
 	pth_name = './results/' + data_name + '/sgd_10_fold_' + loss_function + '.txt'
 	fout = open(pth_name, 'w')
@@ -58,7 +63,17 @@ def run_10_fold_via_sgd(data_name, KN, loss_function):
 
 	for ᘐ in range(1,11):
 		file_name = pth_name + str(ᘐ)
-		run_single_mlp_via_sgd(file_name, KN, loss_function)
+		if loss_function == 'DeepGP':
+			run_single_DeepGP(file_name, KN, loss_function)
+		elif loss_function == 'ikpca':
+			print('----------------')
+			run_single_ikpca(file_name, KN, loss_function)
+		elif loss_function == 'arcos':
+			run_single_arcos(file_name, KN, loss_function)
+		elif loss_function == 'NTK':
+			run_single_NTK(file_name, KN, loss_function)
+		else:
+			run_single_mlp_via_sgd(file_name, KN, loss_function)
 
 	aggregate_all_sgd_results(data_name, loss_function)
 	collect_HSIC_CE_MSE_results(data_name)

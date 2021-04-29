@@ -64,23 +64,6 @@ def cluster_center(X,Y):
 	return [Ł_目, ⵙ_田]
 
 
-def scatter_ratio(X,Y):
-	msk = Y.dot(Y.T)
-	inv_msk = np.absolute(msk - 1)
-	pD = sklearn.metrics.pairwise.pairwise_distances(X)
-
-	sR = np.sum(pD*msk)/np.sum(pD*inv_msk)
-
-	return sR 
-
-
-
-
-
-
-
-
-
 def mean_intra_cluster_cosine_similarity(X,Y):
 	Ł_目 = np.unique(Y)
 	σ_目 = []

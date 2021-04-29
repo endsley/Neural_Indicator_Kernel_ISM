@@ -25,4 +25,4 @@ def run_single(data_name, KN):
 
 	record_results_to_txt(train_acc, test_acc, knet)
 	combine_kernel_img(data_name)
-	#import pdb; pdb.set_trace()
+	import pdb; pdb.set_trace()
