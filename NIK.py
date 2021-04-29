@@ -130,22 +130,22 @@ class kernelNet():
 
 if __name__ == "__main__":
 	#	pick only 1 data set	 	-------------------------
-	data_name = 'random'
+	#data_name = 'random'
 	#data_name = 'adversarial'
+	#data_name = 'spiral'
 	#data_name = 'car'
 	#data_name = 'wine'
 	#data_name = 'cancer'
 	#data_name = 'face'
-	#data_name = 'cifar10'
 	#data_name = 'divorce'
-	#data_name = 'spiral'
+	data_name = 'cifar10'
 
 
 	gen_10_fold_data(data_name, data_path='./data/')	
 
 
 	#	pick one to run		-------------------------
-	run_10_fold(data_name, kernelNet)
+	run_10_fold(data_name, kernelNet)							#  <-------- This one runs W* 
 	#run_10_fold_via_sgd(data_name, kernelNet, 'ikpca')
 	#run_10_fold_via_sgd(data_name, kernelNet, 'arcos')	
 	#run_10_fold_via_sgd(data_name, kernelNet, 'NTK')	
