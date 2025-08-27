@@ -4,8 +4,7 @@ import numpy as np
 import sklearn.metrics
 import time
 from ..tools import kernel_lib as klib
-import pyrfm.random_feature
-
+from src.libs.SORF import SORF
 
 class gaussian():
 	def __init__(self, db):
@@ -21,7 +20,7 @@ class gaussian():
 
 		if n > self.orf_kick_in_at:
 			γ = 1/(2*self.σ*self.σ)
-			self.sorf = pyrfm.random_feature.StructuredOrthogonalRandomFeature(n_components=2048, gamma=γ)
+			self.sorf = SORF(n_components=2048, gamma=γ)
 
 	def __del__(self):
 		pass
