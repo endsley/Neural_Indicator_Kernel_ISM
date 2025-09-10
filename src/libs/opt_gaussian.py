@@ -35,7 +35,7 @@ class opt_gaussian():
 
 		self.Ⅱᵀ = np.ones((ń,ń))
 		ńᒾ = ń*ń
-		Yₒ = OneHotEncoder(categories='auto', sparse=False).fit_transform(np.reshape(Y,(len(Y),1)))
+		Yₒ = OneHotEncoder(categories='auto', sparse_output=False).fit_transform(np.reshape(Y,(len(Y),1)))
 		self.Kᵧ = Kᵧ = Yₒ.dot(Yₒ.T)
 		ṉ = np.sum(Kᵧ)
 		self.σ_type = σ_type
